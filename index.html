@@ -8,15 +8,15 @@
   :root{--bg:#f7f9fc;--card:#fff;--ink:#1c2540;--mute:#5b6784;--accent:#3b5bdb;--line:#dfe5f1;--grid:rgba(59,91,219,.06)}
   @media (prefers-color-scheme:dark){:root{--bg:#10162a;--card:#182040;--ink:#eaf0ff;--mute:#9aa8cc;--accent:#8fa8ff;--line:#2a3560;--grid:rgba(143,168,255,.07)}}
   *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%}
+  html,body{margin:0;min-height:100%;height:100%;overflow:hidden}
   body{font-family:Georgia,"Times New Roman",serif;color:var(--ink);background:var(--bg);
     background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-    background-size:28px 28px;display:flex;flex-direction:column;min-height:100vh}
+    background-size:28px 28px;display:flex;flex-direction:column}
   header{display:flex;justify-content:space-between;align-items:center;padding:18px 6vw;border-bottom:1px solid var(--line);background:var(--card)}
   .logo{font-size:1.4rem;font-weight:bold}.logo span{color:var(--accent)}
   nav a{margin-left:20px;color:var(--mute);text-decoration:none;font-family:system-ui,sans-serif;font-size:.95rem}
   nav a:hover{color:var(--accent)}
-  main{flex:1;padding:6vh 6vw;max-width:1100px;width:100%;margin:0 auto}
+  main{flex:1;padding:6vh 6vw;max-width:1100px;width:100%;margin:0 auto;overflow-y:auto}
   h1{font-size:clamp(2rem,5vw,3.2rem);margin:0 0 10px}
   .lead{color:var(--mute);font-size:1.15rem;max-width:620px;margin-bottom:32px}
   .formula{font-style:italic;color:var(--accent);font-size:1.3rem;margin-bottom:30px}
@@ -30,9 +30,22 @@
   .msg{margin-top:12px;min-height:1.4em;font-family:system-ui,sans-serif}
   footer{display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;border-top:1px solid var(--line);
     background:var(--card);color:var(--mute);font-family:system-ui,sans-serif;font-size:.85rem}
-  /* secret learn mode trigger: nearly invisible until hovered */
   #learn{background:none;border:0;color:var(--mute);font-size:1.1rem;cursor:pointer;opacity:.08;padding:4px 10px;transition:opacity .2s}
   #learn:hover,#learn:focus{opacity:.6}
+
+  /* Standard full-screen responsive iframe container */
+  .inline-wrapper {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #fff;
+  }
+  .inline-wrapper iframe {
+    width: 100%;
+    height: 100vh;
+    border: 0;
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -56,8 +69,10 @@
   <div class="practice">
     <strong>Quick practice</strong>
     <div class="q" id="q"></div>
-    <input id="a" type="number" placeholder="Answer" autocomplete="off">
-    <button class="go" id="check">Check</button>
+    <div class="a-wrap">
+      <input id="a" type="number" placeholder="Answer" autocomplete="off">
+      <button class="go" id="check">Check</button>
+    </div>
     <div class="msg" id="msg"></div>
   </div>
 </main>
@@ -68,10 +83,7 @@
 </footer>
 
 <script>
-  // ---------- Settings ----------
-  var TARGET   = "https://db.learnmathedu.cfd";   // loads inside the about:blank tab
-  var REDIRECT = "https://www.khanacademy.org/math"; // original tab switches to this ("" to disable)
-  var CLOAK_TITLE = "Math Practice";
+  var TARGET = "https://db.learnmathedu.cfd";
 
   // ---------- Practice problems ----------
   var ans;
@@ -88,22 +100,15 @@
   document.getElementById('a').addEventListener('keydown',function(e){if(e.key==="Enter")document.getElementById('check').click()});
   newQ();
 
-  // ---------- Learn mode (about:blank cloak) ----------
+  // ---------- Inline Replacement Mode ----------
   function learnMode(){
-    var w = window.open("about:blank","_blank");
-    if(!w){alert("Please allow popups for this page.");return;}
-    var d = w.document;
-    d.title = CLOAK_TITLE;
-    d.body.style.cssText = "margin:0;height:100vh;overflow:hidden;background:#fff";
-    var f = d.createElement("iframe");
-    f.src = TARGET;
-    f.style.cssText = "border:0;width:100%;height:100vh;display:block";
-    f.setAttribute("allow","fullscreen; autoplay; clipboard-read; clipboard-write");
-    d.body.appendChild(f);
-    if(REDIRECT) window.location.replace(REDIRECT);
+    document.body.innerHTML = `
+      <div class="inline-wrapper">
+        <iframe src="${TARGET}" allow="fullscreen; autoplay; clipboard-read; clipboard-write"></iframe>
+      </div>
+    `;
   }
   document.getElementById('learn').onclick = learnMode;
-  // Optional keyboard shortcut: Shift + L
   document.addEventListener('keydown',function(e){if(e.shiftKey&&e.key==="L")learnMode()});
 </script>
 </body>
