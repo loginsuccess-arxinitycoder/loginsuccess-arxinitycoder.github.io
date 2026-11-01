@@ -23,11 +23,17 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:40px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
   .card h3{margin:0 0 6px}.card p{margin:0;color:var(--mute);font-family:system-ui,sans-serif;font-size:.92rem}
-  .practice{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:480px;margin-bottom:20px}
+  .practice{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:480px;margin-bottom:30px}
   .q{font-size:1.8rem;margin:10px 0 16px}
   input{font-size:1.1rem;padding:9px 12px;border:1px solid var(--line);border-radius:8px;width:120px;background:var(--bg);color:var(--ink)}
-  button.go{font-size:1rem;padding:10px 18px;border:0;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer}
+  button.go{font-size:1rem;padding:10px 18px;border:0;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;margin-left:8px}
   .msg{margin-top:12px;min-height:1.4em;font-family:system-ui,sans-serif}
+  
+  /* Launch button styling */
+  .launch-container{margin-top:10px}
+  .btn-launch{display:inline-block;font-size:1rem;padding:12px 24px;border:0;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-family:system-ui,sans-serif;font-weight:600;cursor:pointer;transition:opacity .2s}
+  .btn-launch:hover{opacity:.9}
+
   footer{display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;border-top:1px solid var(--line);
     background:var(--card);color:var(--mute);font-family:system-ui,sans-serif;font-size:.85rem}
   
@@ -70,13 +76,16 @@
   <div class="practice">
     <strong>Quick practice</strong>
     <div class="q" id="q"></div>
-    <input id="a" type="number" placeholder="Answer" autocomplete="off">
+    <div class="a-wrap">
+      <input id="a" type="number" placeholder="Answer" autocomplete="off">
+      <button class="go" id="check">Check</button>
+    </div>
     <div class="msg" id="msg"></div>
   </div>
 
-  <!-- Go button placed at the bottom of the main content area -->
-  <div>
-    <button class="go" id="check">Check Answer</button>
+  <!-- Launch button at the bottom of the main content area -->
+  <div class="launch-container">
+    <a href="/app" class="btn-launch">Launch</a>
   </div>
 </main>
 
@@ -96,23 +105,4 @@
     document.getElementById('a').value="";
   }
   document.getElementById('check').onclick=function(){
-    var v=Number(document.getElementById('a').value), m=document.getElementById('msg');
-    if(v===ans){m.textContent="✓ Correct!";setTimeout(function(){m.textContent="";newQ()},900)}
-    else m.textContent="Not quite, try again.";
-  };
-  document.getElementById('a').addEventListener('keydown',function(e){if(e.key==="Enter")document.getElementById('check').click()});
-  newQ();
-
-  // ---------- Inline Replacement Mode ----------
-  function learnMode(){
-    document.body.innerHTML = `
-      <div class="inline-wrapper">
-        <iframe src="${TARGET}" allow="fullscreen; autoplay; clipboard-read; clipboard-write"></iframe>
-      </div>
-    `;
-  }
-  document.getElementById('learn').onclick = learnMode;
-  document.addEventListener('keydown',function(e){if(e.shiftKey&&e.key==="L")learnMode()});
-</script>
-</body>
-</html>
+    var v=Number(document.getElementById('a').value
